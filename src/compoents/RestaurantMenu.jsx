@@ -10,8 +10,9 @@ function RestaurantMenu() {
   const [discountData, setDiscountData] = useState([]);
   const [value, setValue] = useState(0);
   const [currIndex, SetCurrIndex] = useState(null);
+  const [TopData, setTopdata] = useState(null)
 
-
+//console.log(resInfo?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards)
   function handlePrev() {
 
   }
@@ -28,7 +29,9 @@ function RestaurantMenu() {
       //  console.log(result?.data?.cards[2]?.card?.card?.info || {});
       let actualMenuData = result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((data) => data?.card?.card?.itemCards || data?.card?.card?.categories);
 
-      console.log(actualMenuData)
+      console.log((result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter(data=>data.card.card.title == "Top Picks")[0])
+
+      setTopdata((result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter(data=>data.card.card.title == "Top Picks")[0])
       setResInfo(result?.data?.cards[2]?.card?.card?.info || {});  // Ensure resInfo is an object
       setDiscountData(result?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.offers || []);
       setMenuData(actualMenuData)
@@ -139,9 +142,93 @@ function RestaurantMenu() {
         </div>
         <h2 className='text-center mt-5 leading-5'>MENU</h2>
         <div className='w-full mt-5 relative cursor-pointer'>
-          <div className='font-extrabold text-[18px] leading-[20px] tracking-[-0.3px] text-[rgba(2,6,12,0.6)] overflow-hidden w-full line-clamp-1 break-words flex items-center justify-center  h-[48px] rounded-[12px] bg-[rgba(2,6,12,0.05)]'>Search for this dishes </div>
+          <div className='font-extrabold text-[18px] leading-[20px] tracking-[-0.3px] text-[rgba(2,6,12,0.6)] overflow-hidden w-full line-clamp-1 break-words flex items-center justify-center  h-[48px] rounded-[12px] bg-[rgba(2,6,12,0.05)]'>
+            Search for this dishes
+             </div>
           <i className={'fi fi-rr-search absolute top-3 right-4 text-[rgba(2,6,12,0.6)] '}></i>
         </div>
+
+
+
+        {TopData && (
+  <div className="w-full overflow-hidden">
+      <div className="flex justify-between mt-8">
+          <h1 className="font-bold text-xl">
+              {TopData.card.card.title}
+          </h1>
+          <div className="flex gap-3">
+              <div
+                  onClick={handlePrev}
+                  className={
+                      ` cursor-pointer rounded-full w-9 h-9 flex justify-center items-center ` +
+                      (value <= 0
+                          ? "bg-gray-100"
+                          : "bg-gray-200")
+                  }
+              >
+                  <i
+                      className={
+                          `fi text-2xl mt-1 fi-rr-arrow-small-left ` +
+                          (value <= 0
+                              ? "text-gray-300"
+                              : "text-gray-800")
+                      }
+                  ></i>
+              </div>
+              <div
+                  onClick={handleNext}
+                  className={
+                      ` cursor-pointer rounded-full w-9 h-9 flex justify-center items-center ` +
+                      (value >= 124
+                          ? "bg-gray-100"
+                          : "bg-gray-200")
+                  }
+              >
+                  <i
+                      className={
+                          `fi text-2xl mt-1 fi-rr-arrow-small-right ` +
+                          (value >= 124
+                              ? "text-gray-300"
+                              : "text-gray-800")
+                      }
+                  ></i>
+              </div>
+          </div>
+      </div>
+      <div className="flex gap-4 mt-5">
+          {TopData.card.card.carousel.map(
+              ({
+                  creativeId,
+                  dish: {
+                      info: { defaultPrice, price, id },
+                  },
+              }) => (
+                  // console.log(creativeId)
+                  <div key={id} className="min-w-[400px] relative h-[405px]">
+                      <img
+                          className="w-full h-full"
+                          src={
+                              "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_292,h_300/" +
+                              creativeId
+                          }
+                          alt=""
+                      />
+                      <div className="absolute bottom-4 text-white flex justify-between w-full px-5">
+                          <p className="">
+                              ₹
+                              {defaultPrice / 100 ||
+                                  price / 100}
+                          </p>
+                          <button className=" px-10 py-2 font-bold text-green-400 bg-white rounded-xl">
+                              Add
+                          </button>
+                      </div>
+                  </div>
+              )
+          )}
+      </div>
+  </div>
+)}
 
         <div>
         {
