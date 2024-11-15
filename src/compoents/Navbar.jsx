@@ -5,6 +5,9 @@ import { Visibility } from '../context/contextApi';
 function Navbar() {
  
 const {visible,setVisible} = useContext(Visibility)
+const [SearchResult, setSearchResult] = useState([])
+
+
   const navItems = [
     {
       name: 'Search',
@@ -36,6 +39,20 @@ const {visible,setVisible} = useContext(Visibility)
     setVisible((prev) => !prev);
   }
 
+ async function searchbyapi(e){
+   if(e==="") return;
+   const result = await fetch(`https://www.swiggy.com/dapi/misc/place-autocomplete?input=${e}`)
+   const data = await result.json();
+    setSearchResult(data.data)
+ }
+
+
+
+
+
+
+
+
   return (
     <div className="relative w-full">
       {/* Overlay */}
@@ -48,13 +65,23 @@ const {visible,setVisible} = useContext(Visibility)
 
       {/* Sidebar */}
       <div
-        className={`bg-white w-[40%] h-full z-40 absolute transition-transform duration-500 ${
+        className={`bg-white w-[40%] h-full z-40 absolute p-5 transition-transform duration-500 ${
           visible ? 'left-0' : '-left-[100%]'
         }`}
       >
         <p className="bg-black text-white p-5 w-[10%] cursor-pointer" onClick={handleVisible}>
           Close
         </p>
+        <input type='text' className='border p-5 focus:outline-none focus:shadow-lg' onChange={(e)=>searchbyapi(e.target.value)}/>
+        <div>
+          <ul>
+         {
+          SearchResult.map((data)=>(
+            <li>{data.structured_formatting.main_text}<p className='text-sm opacity-65'>{data.structured_formatting.secondary_text}</p></li>
+          ))
+         }
+          </ul>
+        </div>
       </div>
 
       {/* Navbar */}
