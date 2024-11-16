@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import VegClassifierIcon from '../VEG NON VEG/Veg';
 import NonVegClassifierIcon from '../VEG NON VEG/Nonveg';
 
-function Detailcard({info:{ name, price, defaultPrice, itemAttribute: { vegClassifier }, ratings: { aggregatedRating: { rating, ratingCountV2 } }, description, imageId }}) {
+function Detailcard({ info: { name, price, defaultPrice, itemAttribute: { vegClassifier }, ratings: { aggregatedRating: { rating, ratingCountV2 } }, description, imageId } }) {
    
   const [isMore, setMore] = useState(false);
-  const trim_content = description.length > 140 ? description.substring(0, 140) + "..." : description;
+
+  const trim_content = description 
+    ? (description.length > 140 
+        ? description.substring(0, 140) + "..." 
+        : description) 
+    : ""; // Fallback to empty string if description is null or undefined
 
   return (
     <>
@@ -26,17 +31,23 @@ function Detailcard({info:{ name, price, defaultPrice, itemAttribute: { vegClass
             </span>
           </p>
 
-          {description.length > 140 ? (
-            <div>
-              <span className="font-semibold text-[16px] leading-[19px] tracking-[-0.3px] text-[rgba(2,6,12,0.6)]">
-                {isMore ? description : trim_content}
-              </span>
-              <button className="font-bold ml-1" onClick={() => setMore(!isMore)}>
-                {isMore ? "Less" : "More"}
-              </button>
-            </div>
+          {description ? ( // Check if description exists before rendering
+            description.length > 140 ? (
+              <div>
+                <span className="font-semibold text-[16px] leading-[19px] tracking-[-0.3px] text-[rgba(2,6,12,0.6)]">
+                  {isMore ? description : trim_content}
+                </span>
+                <button className="font-bold ml-1" onClick={() => setMore(!isMore)}>
+                  {isMore ? "Less" : "More"}
+                </button>
+              </div>
+            ) : (
+              <span>{description}</span>
+            )
           ) : (
-            <span>{description}</span>
+            <span className="font-semibold text-[16px] leading-[19px] tracking-[-0.3px] text-[rgba(2,6,12,0.6)]">
+              No description available.
+            </span>
           )}
         </div>
 

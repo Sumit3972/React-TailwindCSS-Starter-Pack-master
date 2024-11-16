@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Visibility } from '../context/contextApi';
+import { Coordinate, Visibility } from '../context/contextApi';
 
 function Navbar() {
- 
-const {visible,setVisible} = useContext(Visibility)
-const [SearchResult, setSearchResult] = useState([])
+
+  const { visible, setVisible } = useContext(Visibility)
+  const [SearchResult, setSearchResult] = useState([])
+  const { coordinate, setcoordinate } = useContext(Coordinate);
+  const [address, setaddress] = useState("")
 
 
   const navItems = [
@@ -39,13 +41,27 @@ const [SearchResult, setSearchResult] = useState([])
     setVisible((prev) => !prev);
   }
 
- async function searchbyapi(e){
-   if(e==="") return;
-   const result = await fetch(`https://www.swiggy.com/dapi/misc/place-autocomplete?input=${e}`)
-   const data = await result.json();
+  async function searchbyapi(e) {
+    if (e === "") return;
+    const result = await fetch(`https://www.swiggy.com/dapi/misc/place-autocomplete?input=${e}`)
+    const data = await result.json();
     setSearchResult(data.data)
- }
+  }
 
+
+  async function fetchLangData(id) {
+    if (id === "") return;
+    console.log(id)
+    const result = await fetch(`https://www.swiggy.com/dapi/misc/address-recommend?place_id=${id}`)
+
+    const data = await result.json();
+    setcoordinate({
+      lat: data.data[0].geometry.location.lat,
+      lng: data.data[0].geometry.location.lng,
+    })
+    setaddress(data.data[0].formatted_address)
+
+  }
 
 
 
@@ -58,28 +74,30 @@ const [SearchResult, setSearchResult] = useState([])
       {/* Overlay */}
       <div
         onClick={handleVisible}
-        className={`w-full bg-black/50 z-30 h-full absolute transition-opacity ${
-          visible ? 'visible opacity-100' : 'invisible opacity-0'
-        }`}
+        className={`w-full bg-black/50 z-30 h-full absolute transition-opacity ${visible ? 'visible opacity-100' : 'invisible opacity-0'
+          }`}
       ></div>
 
       {/* Sidebar */}
       <div
-        className={`bg-white w-[40%] h-full z-40 absolute p-5 transition-transform duration-500 ${
-          visible ? 'left-0' : '-left-[100%]'
-        }`}
+        className={`bg-white w-[40%] h-full z-40 absolute p-5 transition-transform duration-500 ${visible ? 'left-0' : '-left-[100%]'
+          }`}
       >
         <p className="bg-black text-white p-5 w-[10%] cursor-pointer" onClick={handleVisible}>
           Close
         </p>
-        <input type='text' className='border p-5 focus:outline-none focus:shadow-lg' onChange={(e)=>searchbyapi(e.target.value)}/>
+        <input type='text' className='border p-5 focus:outline-none focus:shadow-lg' onChange={(e) => searchbyapi(e.target.value)} />
         <div>
           <ul>
-         {
-          SearchResult.map((data)=>(
-            <li>{data.structured_formatting.main_text}<p className='text-sm opacity-65'>{data.structured_formatting.secondary_text}</p></li>
-          ))
-         }
+            {
+              SearchResult.map((data) => (
+                <li onClick={() => fetchLangData(data.place_id)}>{data.structured_formatting.main_text}
+                  <p className='text-sm opacity-65'>
+                    {data.structured_formatting.secondary_text}
+                  </p>
+                </li>
+              ))
+            }
           </ul>
         </div>
       </div>
@@ -96,7 +114,9 @@ const [SearchResult, setSearchResult] = useState([])
               />
             </Link>
             <div className="flex items-center gap-2 cursor-pointer" onClick={handleVisible}>
-              <p className="font-bold border-b-2 border-black">others</p>
+              <p >
+                <span className="font-bold border-b-2 border-black">others</span>
+                <span className='ml-3 text-[#686b78] overflow-hidden text-ellipsis whitespace-nowrap'>{address}</span></p>
               <i className="fi text-2xl text-orange-400 mt-2 fi-rs-angle-small-down"></i>
             </div>
           </div>

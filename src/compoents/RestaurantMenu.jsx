@@ -1,7 +1,8 @@
 import { data } from 'autoprefixer';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MenuCard from './MenuCard';
+import { Coordinate } from '../context/contextApi';
 
 function RestaurantMenu() {
   const { id } = useParams();
@@ -11,6 +12,9 @@ function RestaurantMenu() {
   const [value, setValue] = useState(0);
   const [currIndex, SetCurrIndex] = useState(null);
   const [TopData, setTopdata] = useState(null)
+  const { coordinate: {
+    lat, lng
+  }, setcoordinate } = useContext(Coordinate);
 
 //console.log(resInfo?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards)
   function handlePrev() {
@@ -23,7 +27,7 @@ function RestaurantMenu() {
 
   async function fetchMenu() {
     try {
-      const response = await fetch(`https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.95250&lng=75.71050&restaurantId=${id}&catalog_qa=undefined&submitAction=ENTER`);
+      const response = await fetch(`https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${lat}&lng=${lng}&restaurantId=${id}&catalog_qa=undefined&submitAction=ENTER`);
       const result = await response.json();
 
       //  console.log(result?.data?.cards[2]?.card?.card?.info || {});
