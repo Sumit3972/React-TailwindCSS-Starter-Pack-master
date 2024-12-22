@@ -35,12 +35,9 @@ function Navbar() {
       image: 'fi fi-rr-badge-percent',
     },
   ];
-
-  function handleVisible() {
-    console.log('Toggle Sidebar');
-    setVisible((prev) => !prev);
-  }
-
+  const handleVisible = () => {
+    setVisible(!visible);
+  };
   async function searchbyapi(e) {
     if (e === "") return;
     const result = await fetch(`https://www.swiggy.com/dapi/misc/place-autocomplete?input=${e}`)
@@ -51,18 +48,19 @@ function Navbar() {
 
   async function fetchLangData(id) {
     if (id === "") return;
-    console.log(id)
-    const result = await fetch(`https://www.swiggy.com/dapi/misc/address-recommend?place_id=${id}`)
-
+    console.log(id);
+    const result = await fetch(`https://www.swiggy.com/dapi/misc/address-recommend?place_id=${id}`);
     const data = await result.json();
     setcoordinate({
       lat: data.data[0].geometry.location.lat,
       lng: data.data[0].geometry.location.lng,
-    })
-    setaddress(data.data[0].formatted_address)
-
+    });
+    setaddress(data.data[0].formatted_address);
+  
+    // Close the sidebar after selecting a result
+    setVisible(false);
   }
-
+  
 
 
 
@@ -74,36 +72,42 @@ function Navbar() {
       {/* Overlay */}
       <div
         onClick={handleVisible}
-        className={`w-full bg-black/50 z-30 h-full absolute transition-opacity ${visible ? 'visible opacity-100' : 'invisible opacity-0'
-          }`}
+        className={` w-full bg-black/50 z-30 h-full absolute transition-opacity duration-500 ${
+          visible ? 'visible opacity-100' : 'invisible opacity-0'
+        }`}
       ></div>
-
+  
       {/* Sidebar */}
       <div
-        className={`bg-white w-[40%] h-full z-40 absolute p-5 transition-transform duration-500 ${visible ? 'left-0' : '-left-[100%]'
-          }`}
+        className={` flex justify-end bg-white w-[40%] min-h-full z-30 absolute p-5 transition-transform duration-500 ${
+          visible ? 'left-0' : '-left-[100%]'
+        }`}
       >
-        <p className="bg-black text-white p-5 w-[10%] cursor-pointer" onClick={handleVisible}>
-          Close
-        </p>
-        <input type='text' className='border p-5 focus:outline-none focus:shadow-lg' onChange={(e) => searchbyapi(e.target.value)} />
-        <div>
-          <ul>
-            {
-              SearchResult.map((data) => (
-                <li onClick={() => fetchLangData(data.place_id)}>{data.structured_formatting.main_text}
-                  <p className='text-sm opacity-65'>
-                    {data.structured_formatting.secondary_text}
-                  </p>
-                </li>
-              ))
-            }
+      
+       <div className='flex flex-col w-[50%] mt-2 gap-4 mr-4 '>  
+          <i className='fi fi-br-cross'  onClick={handleVisible} ></i>
+        <input
+          type="text"
+          className="border p-5 focus:outline-none focus:shadow-xl"
+          onChange={(e) => searchbyapi(e.target.value)}
+        />
+        <div className='border p-5'>
+          <ul >
+            {SearchResult.map((data) => (
+              <li onClick={() => fetchLangData(data.place_id)} key={data.place_id}>
+                {data.structured_formatting.main_text}
+                <p  className="text-sm opacity-65" >
+                  {data.structured_formatting.secondary_text}
+                </p>
+              </li>
+            ))}
           </ul>
         </div>
+        </div>
       </div>
-
+  
       {/* Navbar */}
-      <div className="w-full sticky shadow-md h-20 z-20 flex justify-center items-center">
+      <div className="w-full sticky shadow-md h-20 z-20 flex justify-center items-center bg-white">
         <div className="w-[70%] flex justify-between">
           <div className="flex items-center gap-1">
             <Link to={'/'}>
@@ -113,10 +117,16 @@ function Navbar() {
                 alt="Swiggy Logo"
               />
             </Link>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={handleVisible}>
-              <p >
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={handleVisible}
+            >
+              <p>
                 <span className="font-bold border-b-2 border-black">others</span>
-                <span className='ml-3 text-[#686b78] overflow-hidden text-ellipsis whitespace-nowrap'>{address}</span></p>
+                <span className="ml-3 text-[#686b78] overflow-hidden text-ellipsis whitespace-nowrap">
+                  {address}
+                </span>
+              </p>
               <i className="fi text-2xl text-orange-400 mt-2 fi-rs-angle-small-down"></i>
             </div>
           </div>
@@ -133,6 +143,7 @@ function Navbar() {
       <Outlet />
     </div>
   );
+  
 }
 
 export default Navbar;
