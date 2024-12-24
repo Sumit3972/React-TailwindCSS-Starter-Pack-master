@@ -1,111 +1,105 @@
 import React, { useContext, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Coordinate, Visibility } from '../context/contextApi';
+import { CardContext, Coordinate, Visibility } from '../context/contextApi';
 
 function Navbar() {
-
-  const { visible, setVisible } = useContext(Visibility)
-  const [SearchResult, setSearchResult] = useState([])
+  const { visible, setVisible } = useContext(Visibility);
+  const [SearchResult, setSearchResult] = useState([]);
   const { coordinate, setcoordinate } = useContext(Coordinate);
-  const [address, setaddress] = useState("")
-
+  const [address, setaddress] = useState("");
+  const { CardData } = useContext(CardContext); // Fixed context usage
 
   const navItems = [
-    {
-      name: 'Search',
-      image: 'fi-rr-search',
-      path: '/search',
-    },
-    {
-      name: 'Sign in',
-      image: 'fi-rr-user',
-      path: '/signin',
-    },
-    {
-      name: 'Cart',
-      image: 'fi-rr-shopping-cart-add',
-      path: '/cart',
-    },
-    {
-      name: 'Help',
-      image: 'fi fi-sr-life-ring',
-    },
-    {
-      name: 'Offer',
-      image: 'fi fi-rr-badge-percent',
-    },
+    { name: 'Search', image: 'fi-rr-search', path: '/search' },
+    { name: 'Sign in', image: 'fi-rr-user', path: '/signin' },
+    { name: 'Cart', image: 'fi-rr-shopping-cart-add', path: '/cart' },
+    { name: 'Help', image: 'fi fi-sr-life-ring' },
+    { name: 'Offer', image: 'fi fi-rr-badge-percent' },
   ];
+
   const handleVisible = () => {
     setVisible(!visible);
   };
-  async function searchbyapi(e) {
-    if (e === "") return;
-    const result = await fetch(`https://www.swiggy.com/dapi/misc/place-autocomplete?input=${e}`)
-    const data = await result.json();
-    setSearchResult(data.data)
-  }
 
+  const searchbyapi = async (query) => {
+    if (!query) return;
+    try {
+      const result = await fetch(
+        `https://www.swiggy.com/dapi/misc/place-autocomplete?input=${query}`
+      );
+      const data = await result.json();
+      setSearchResult(data.data || []);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
 
-  async function fetchLangData(id) {
-    if (id === "") return;
-    console.log(id);
-    const result = await fetch(`https://www.swiggy.com/dapi/misc/address-recommend?place_id=${id}`);
-    const data = await result.json();
-    setcoordinate({
-      lat: data.data[0].geometry.location.lat,
-      lng: data.data[0].geometry.location.lng,
-    });
-    setaddress(data.data[0].formatted_address);
-  
-    // Close the sidebar after selecting a result
-    setVisible(false);
-  }
-  
-
-
-
-
-
+  const fetchLangData = async (id) => {
+    if (!id) return;
+    try {
+      const result = await fetch(
+        `https://www.swiggy.com/dapi/misc/address-recommend?place_id=${id}`
+      );
+      const data = await result.json();
+      setcoordinate({
+        lat: data.data[0].geometry.location.lat,
+        lng: data.data[0].geometry.location.lng,
+      });
+      setaddress(data.data[0].formatted_address);
+      setVisible(false); // Close sidebar
+    } catch (error) {
+      console.error('Error fetching location data:', error);
+    }
+  };
 
   return (
     <div className="relative w-full">
       {/* Overlay */}
       <div
         onClick={handleVisible}
-        className={` w-full bg-black/50 z-30 h-full absolute transition-opacity duration-500 ${
+        className={`w-full bg-black/50 z-30 h-full absolute transition-opacity duration-500 ${
           visible ? 'visible opacity-100' : 'invisible opacity-0'
         }`}
       ></div>
-  
+
       {/* Sidebar */}
       <div
-        className={` flex justify-end bg-white w-[40%] min-h-full z-30 absolute p-5 transition-transform duration-500 ${
+        className={`flex justify-end bg-white w-[40%] min-h-full z-30 absolute p-5 transition-transform duration-500 ${
           visible ? 'left-0' : '-left-[100%]'
         }`}
       >
-      
-       <div className='flex flex-col w-[50%] mt-2 gap-4 mr-4 '>  
-          <i className='fi fi-br-cross'  onClick={handleVisible} ></i>
-        <input
-          type="text"
-          className="border p-5 focus:outline-none focus:shadow-xl"
-          onChange={(e) => searchbyapi(e.target.value)}
-        />
-        <div className='border p-5'>
-          <ul >
-            {SearchResult.map((data) => (
-              <li onClick={() => fetchLangData(data.place_id)} key={data.place_id}>
-                {data.structured_formatting.main_text}
-                <p  className="text-sm opacity-65" >
-                  {data.structured_formatting.secondary_text}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="flex flex-col w-[60%] mt-2 gap-4 mr-6">
+          <i className="fi fi-br-cross" onClick={handleVisible}></i>
+          <input
+            type="text"
+            className="border p-5 focus:outline-none focus:shadow-xl"
+            onChange={(e) => searchbyapi(e.target.value)}
+          />
+          <div className="border p-5">
+            <ul>
+              {SearchResult.map((data, index) => (
+                <li key={data.place_id} onClick={() => fetchLangData(data.place_id)}>
+                  <div className="my-5">
+                    <div className="flex gap-4">
+                      <i className="fi fi-rr-marker mt-2"></i>
+                      <div>
+                        <p className="font-bold">{data.structured_formatting.main_text}</p>
+                        <p className="text-sm text-gray-500">
+                          {data.structured_formatting.secondary_text}
+                        </p>
+                      </div>
+                    </div>
+                    {index !== SearchResult.length - 1 && (
+                      <hr className="opacity-40 my-2" />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-  
+
       {/* Navbar */}
       <div className="w-full sticky shadow-md h-20 z-20 flex justify-center items-center bg-white">
         <div className="w-[70%] flex justify-between">
@@ -122,9 +116,9 @@ function Navbar() {
               onClick={handleVisible}
             >
               <p>
-                <span className="font-bold border-b-2 border-black">others</span>
+                <span className="font-bold border-b-2 border-black">Others</span>
                 <span className="ml-3 text-[#686b78] overflow-hidden text-ellipsis whitespace-nowrap">
-                  {address}
+                  {address || 'Select a location'}
                 </span>
               </p>
               <i className="fi text-2xl text-orange-400 mt-2 fi-rs-angle-small-down"></i>
@@ -135,6 +129,11 @@ function Navbar() {
               <div className="flex items-center gap-2" key={index}>
                 <i className={`mt-1 fi text-gray-600 text-xl ${data.image}`}></i>
                 <p className="text-lg font-medium text-gray-500">{data.name}</p>
+                {data.name === 'Cart' && (
+                  <p className="bg-red-500 text-white text-sm rounded-full px-2 py-1">
+                    {CardData ? CardData.length : 0}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -143,7 +142,6 @@ function Navbar() {
       <Outlet />
     </div>
   );
-  
 }
 
 export default Navbar;
