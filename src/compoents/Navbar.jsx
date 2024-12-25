@@ -13,8 +13,8 @@ function Navbar() {
     { name: 'Search', image: 'fi-rr-search', path: '/search' },
     { name: 'Sign in', image: 'fi-rr-user', path: '/signin' },
     { name: 'Cart', image: 'fi-rr-shopping-cart-add', path: '/cart' },
-    { name: 'Help', image: 'fi fi-sr-life-ring' },
-    { name: 'Offer', image: 'fi fi-rr-badge-percent' },
+    { name: 'Help', image: 'fi fi-sr-life-ring', path:'/help' },
+    { name: 'Offer', image: 'fi fi-rr-badge-percent',path: '/offer' },
   ];
 
   const handleVisible = () => {
@@ -124,8 +124,11 @@ function Navbar() {
               <i className="fi text-2xl text-orange-400 mt-2 fi-rs-angle-small-down"></i>
             </div>
           </div>
+        
           <div className="flex items-center gap-14">
+           
             {navItems.map((data, index) => (
+              <Link to={data.path}>
               <div className="flex items-center gap-2" key={index}>
                 <i className={`mt-1 fi text-gray-600 text-xl ${data.image}`}></i>
                 <p className="text-lg font-medium text-gray-500">{data.name}</p>
@@ -135,6 +138,8 @@ function Navbar() {
                   </p>
                 )}
               </div>
+              </Link>
+           
             ))}
           </div>
         </div>

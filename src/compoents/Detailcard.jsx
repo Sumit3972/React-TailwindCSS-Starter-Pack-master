@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
 import VegClassifierIcon from '../VEG NON VEG/Veg';
 import NonVegClassifierIcon from '../VEG NON VEG/Nonveg';
+import { useContext } from 'react';
+import { CardContext } from '../context/contextApi';
 
-function Detailcard({ info: { name, price, defaultPrice, itemAttribute: { vegClassifier }, ratings: { aggregatedRating: { rating, ratingCountV2 } }, description, imageId } }) {
-   
+function Detailcard({ info }) {
+
+
+  const { name, price, defaultPrice, itemAttribute: { vegClassifier }, ratings: { aggregatedRating: { rating, ratingCountV2 } }, description, imageId } = info;
+
+
+ 
+
   const [isMore, setMore] = useState(false);
+  const { setCartData } = useContext(CardContext);
 
-  const trim_content = description 
-    ? (description.length > 140 
-        ? description.substring(0, 140) + "..." 
-        : description) 
+  function HandlAddtoCart(){
+    setCartData((prev => [...prev,info]))
+  }
+
+  const trim_content = description
+    ? (description.length > 140
+      ? description.substring(0, 140) + "..."
+      : description)
     : ""; // Fallback to empty string if description is null or undefined
 
   return (
@@ -57,7 +70,7 @@ function Detailcard({ info: { name, price, defaultPrice, itemAttribute: { vegCla
             src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_300,h_300,c_fit/${imageId}`}
             alt={name}
           />
-          <button className="absolute bottom-[-20px] left-5 bg-white font-extrabold text-[18px] leading-[24px] uppercase text-[rgb(27,166,114)] text-lg rounded-xl border px-8 py-2 drop-shadow">
+          <button onClick={HandlAddtoCart} className="absolute bottom-[-20px] left-5 bg-white font-extrabold text-[18px] leading-[24px] uppercase text-[rgb(27,166,114)] text-lg rounded-xl border px-8 py-2 drop-shadow">
             Add
           </button>
         </div>

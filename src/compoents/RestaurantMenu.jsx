@@ -33,7 +33,7 @@ function RestaurantMenu() {
       //  console.log(result?.data?.cards[2]?.card?.card?.info || {});
       let actualMenuData = result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((data) => data?.card?.card?.itemCards || data?.card?.card?.categories);
 
-      console.log((result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter(data=>data.card.card.title == "Top Picks")[0])
+      //console.log((result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter(data=>data.card.card.title == "Top Picks")[0])
 
       setTopdata((result?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards).filter(data=>data.card.card.title == "Top Picks")[0])
       setResInfo(result?.data?.cards[2]?.card?.card?.info || {});  // Ensure resInfo is an object
