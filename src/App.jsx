@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Navbar from './compoents/Navbar'; // Fixed typo in folder name
 import RestaurantComponent from './compoents/Body'; // Fixed typo in folder name
@@ -10,7 +10,16 @@ import Cart from './compoents/Cart';
 function App() {
   const [visible, setVisible] = useState(false);
   const [coordinate, setCoordinate] = useState({ lat: 26.95250, lng: 75.71050 });
-  const [CardData, setCartData] = useState([{},{}]); // Initialized with mock data
+  const [CardData, setCartData] = useState([]); // Initialized with mock data
+
+
+   function Get_Data_Local_Storage(){
+    let data = JSON.parse(localStorage.getItem("cartdata")) || []
+    setCartData(data);
+   }
+   useEffect(()=>{
+    Get_Data_Local_Storage();
+   },[])
 
   return (
     <CardContext.Provider value={{ CardData, setCartData }}>

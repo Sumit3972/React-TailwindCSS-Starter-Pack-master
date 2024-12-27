@@ -13,11 +13,18 @@ function Detailcard({ info }) {
  
 
   const [isMore, setMore] = useState(false);
-  const { setCartData } = useContext(CardContext);
+  const { CardData ,setCartData } = useContext(CardContext);
 
   function HandlAddtoCart(){
-    setCartData((prev => [...prev,info]))
-  }
+    const isAdded = CardData.find((data)=> data.id === info.id);
+    if(!isAdded){
+      setCartData((prev => [...prev,info]))
+      localStorage.setItem("cartdata",JSON.stringify([...CardData,info]))
+    }else{
+      alert("bsdk add ho rakha hai");
+    }
+    } 
+   
 
   const trim_content = description
     ? (description.length > 140
