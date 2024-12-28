@@ -4,7 +4,7 @@ import NonVegClassifierIcon from '../VEG NON VEG/Nonveg';
 import { useContext } from 'react';
 import { CardContext } from '../context/contextApi';
 
-function Detailcard({ info }) {
+function Detailcard({ info, resInfo }) {
 
 
   const { name, price, defaultPrice, itemAttribute: { vegClassifier }, ratings: { aggregatedRating: { rating, ratingCountV2 } }, description, imageId } = info;
@@ -16,12 +16,22 @@ function Detailcard({ info }) {
   const { CardData ,setCartData } = useContext(CardContext);
 
   function HandlAddtoCart(){
+    console.log(resInfo)
     const isAdded = CardData.find((data)=> data.id === info.id);
+    const Res_localStorage = JSON.parse(localStorage.getItem("resinfo") ) || [];
+
     if(!isAdded){
-      setCartData((prev => [...prev,info]))
-      localStorage.setItem("cartdata",JSON.stringify([...CardData,info]))
+      if(Res_localStorage.name === resInfo.name || Res_localStorage.length === 0){
+        setCartData((prev => [...prev,info]))
+        localStorage.setItem("cartdata",JSON.stringify([...CardData,info]))
+        localStorage.setItem("resinfo",JSON.stringify(resInfo))
+      }
+      else{
+           alert("lode ek hi resturant kaa add kar")
+      }
+      
     }else{
-      alert("bsdk add ho rakha hai");
+      alert("Item added already ");
     }
     } 
    

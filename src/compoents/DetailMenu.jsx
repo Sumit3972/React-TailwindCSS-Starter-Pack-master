@@ -7,7 +7,7 @@ import { info } from 'autoprefixer';
 
 
 
-function DetailMenu({ itemCards }) {
+function DetailMenu({ itemCards,resInfo }) {
 
 
 
@@ -15,7 +15,7 @@ function DetailMenu({ itemCards }) {
     <div className='my-5'>
       {
         itemCards.map(({ card: { info } }) => (
-          <Detailcard info={info}/>
+          <Detailcard info={info} resInfo={resInfo}/>
         ))
 
       }

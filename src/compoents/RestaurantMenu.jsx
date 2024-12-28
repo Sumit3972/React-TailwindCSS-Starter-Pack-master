@@ -237,7 +237,7 @@ function RestaurantMenu() {
         <div>
         {
   menu.map(({ card: { card } }, i) => (
-    <MenuCard  card={card} />
+    <MenuCard  card={card} resInfo={resInfo} />
   ))
 }
 

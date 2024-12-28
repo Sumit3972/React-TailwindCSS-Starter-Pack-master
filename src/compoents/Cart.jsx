@@ -9,19 +9,25 @@ function Cart() {
 
    function RemoveAllCart(){
         setCartData([]);
-        localStorage.setItem("cart",JSON.stringify([]));
+        localStorage.clear()
    }
 
 
   function Removecart(i){
-     let newarr = [...CardData];
-     newarr.splice(i,1);
-     setCartData(newarr);
-     localStorage.setItem("cart",JSON.stringify(newarr));
+    if(CardData.length > 1){
+      let newarr = [...CardData];
+      newarr.splice(i,1);
+      setCartData(newarr);
+      localStorage.setItem("cartdata",JSON.stringify(newarr));
+     
+    }else{
+      RemoveAllCart();
+    }
+    
   }
 
     const {CardData,setCartData}= useContext(CardContext)
-    //console.log(CardData)
+    console.log(CardData)
 
     let totalprice = 0;
     for(let i=0;i<CardData.length;i++){
