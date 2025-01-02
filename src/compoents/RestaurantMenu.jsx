@@ -2,7 +2,7 @@ import { data } from 'autoprefixer';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MenuCard from './MenuCard';
-import { Coordinate } from '../context/contextApi';
+import { useSelector } from 'react-redux';
 
 function RestaurantMenu() {
   const { id } = useParams();
@@ -12,9 +12,7 @@ function RestaurantMenu() {
   const [value, setValue] = useState(0);
   const [currIndex, SetCurrIndex] = useState(null);
   const [TopData, setTopdata] = useState(null)
-  const { coordinate: {
-    lat, lng
-  }, setcoordinate } = useContext(Coordinate);
+  const {lat,lng} = useSelector((state => state.Coordinate))
 
 //console.log(resInfo?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards)
   function handlePrev() {

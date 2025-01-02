@@ -1,15 +1,17 @@
 import React, { useContext } from 'react'
 import { CardContext } from '../context/contextApi'
+import { useDispatch, useSelector } from 'react-redux';
+import CartSlice, { clearcart, deleteItem } from '../utlis/CartSlice'
 
 function Cart() {
 
-
+ const dispatch = useDispatch();
 
 
 
    function RemoveAllCart(){
-        setCartData([]);
-        localStorage.clear()
+       dispatch(clearcart())
+        
    }
 
 
@@ -17,7 +19,7 @@ function Cart() {
     if(CardData.length > 1){
       let newarr = [...CardData];
       newarr.splice(i,1);
-      setCartData(newarr);
+      dispatch(deleteItem(newarr))
       localStorage.setItem("cartdata",JSON.stringify(newarr));
      
     }else{
@@ -26,8 +28,8 @@ function Cart() {
     
   }
 
-    const {CardData,setCartData}= useContext(CardContext)
-    console.log(CardData)
+  const CardData = useSelector((state => state.CartSlice.CartItems))
+  console.log(CardData)
 
     let totalprice = 0;
     for(let i=0;i<CardData.length;i++){

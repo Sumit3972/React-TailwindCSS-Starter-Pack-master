@@ -6,13 +6,15 @@ import { Routes, Route } from 'react-router-dom'; // Correct import for routing
 import RestaurantMenu from './compoents/RestaurantMenu'; // Fixed typo in folder name
 import { CardContext, Coordinate, Visibility } from './context/contextApi';
 import Cart from './compoents/Cart';
+import { useSelector } from 'react-redux';
+import toggleSlice from './utlis/toggleslice'
 
 function App() {
-  const [visible, setVisible] = useState(false);
+ /*  const [/* visible, setVisible] = useState(false); */
   const [coordinate, setCoordinate] = useState({ lat: 26.95250, lng: 75.71050 });
   const [CardData, setCartData] = useState([]); // Initialized with mock data
-
-
+  const visible = useSelector((state=> state.toggle.searchbartoggle))
+/* 
    function Get_Data_Local_Storage(){
     let data = JSON.parse(localStorage.getItem("cartdata")) || []
     setCartData(data);
@@ -20,11 +22,9 @@ function App() {
    useEffect(()=>{
     Get_Data_Local_Storage();
    },[])
-
+ */
   return (
-    <CardContext.Provider value={{ CardData, setCartData }}>
-      <Coordinate.Provider value={{ coordinate, setCoordinate }}>
-        <Visibility.Provider value={{ visible, setVisible }}>
+  
           <div className={visible ? 'max-h-screen overflow-hidden' : ''}>
             <Routes>
               <Route path="/" element={<Navbar />} >
@@ -35,9 +35,7 @@ function App() {
               </Route>
             </Routes>
           </div>
-        </Visibility.Provider>
-      </Coordinate.Provider>
-    </CardContext.Provider>
+   
   );
 }
 
