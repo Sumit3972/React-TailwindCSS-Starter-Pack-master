@@ -5,7 +5,7 @@ import Coordinate from "./cordinate";
 const store = configureStore({
     reducer: {
         toggle: toggleSliceReducer, // Use clear naming for the reducer
-        CartSlice:CartSlice,
+        CartSlice: CartSlice,
         Coordinate,
     },
 });

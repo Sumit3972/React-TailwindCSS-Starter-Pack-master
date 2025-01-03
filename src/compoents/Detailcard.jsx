@@ -2,38 +2,41 @@ import React, { useState, useContext } from 'react';
 import VegClassifierIcon from '../VEG NON VEG/Veg';
 import NonVegClassifierIcon from '../VEG NON VEG/Nonveg';
 import { CardContext } from '../context/contextApi';
-import ConfirmationModal from './Confirmationmodal'; // Import the confirmation modal
 import { useDispatch, useSelector } from 'react-redux';
-import  {addtocart} from '../utlis/CartSlice'
+import { addtocart, clearcart } from '../utlis/CartSlice'
+import toast from 'react-hot-toast';
 
 function Detailcard({ info, resInfo }) {
-  const { 
-    name, 
-    price, 
-    defaultPrice, 
-    itemAttribute: { vegClassifier }, 
-    ratings: { aggregatedRating: { rating, ratingCountV2 } }, 
-    description, 
-    imageId 
+  const {
+    name,
+    price,
+    defaultPrice,
+    itemAttribute: { vegClassifier },
+    ratings: { aggregatedRating: { rating, ratingCountV2 } },
+    description,
+    imageId
   } = info;
 
   const [isMore, setMore] = useState(false);
   const CardData = useSelector((state => state.CartSlice.CartItems))
   const Res_localStorage = useSelector((state => state.CartSlice.resInfo))
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isDiffRes, setDiffRes] = useState(false);
+
   const dispatch = useDispatch();
- 
+
   function handleAddToCart() {
     const isAdded = CardData.find((data) => data.id === info.id);
 
     if (!isAdded) {
       if (!Res_localStorage || Res_localStorage.name === resInfo.name) {
         dispatch(addtocart({ info, resInfo }));
+        toast.success("item added sucessfully");
       } else {
-        setShowConfirmation(true); // Show confirmation modal if adding items from a different restaurant
+        toast.error("different resturant item are not allowed please clear the cart or place order")
+        setDiffRes((prev) => !prev)
       }
     } else {
-      alert('Item already added.');
+      toast.error('Item already added.');
     }
   }
 
@@ -47,6 +50,10 @@ function Detailcard({ info, resInfo }) {
 
   function handleCancelClearCart() {
     setShowConfirmation(false); // Close the confirmation modal
+  }
+
+  function HandleDefRes() {
+    setDiffRes((prev => !prev))
   }
 
   const trim_content = description
@@ -110,12 +117,18 @@ function Detailcard({ info, resInfo }) {
       </div>
       <hr className="my-5" />
 
-      {showConfirmation && (
-        <ConfirmationModal
-          onConfirm={handleConfirmClearCart}
-          onCancel={handleCancelClearCart}
-        />
-      )}
+      {
+        isDiffRes && (
+          <div className='w-[520px] h-[204px] shadow-2xl p-5 left-[29%] border fixed bottom-8 z-50 bg-white'>
+            <h1 className='text-[#282c3f] font-semibold text-[20px]'>Items already in cart</h1>
+            <p className='text-[#535665] leading-[20px] text-[14px]'>Your cart contains items from other restaurant. Would you like to reset your cart for adding items from this restaurant?</p>
+            <div className='flex justify-between w-full uppercase gap-5 mt-5 '>
+              <button onClick={HandleDefRes} className=' w-1/2 border-2 border-green-500 p-4 text-green-500 font-medium'>NO</button>
+              <button onClick={() => dispatch(clearcart(), HandleDefRes())} className=' w-1/2 border-2 p-4 cursor-pointer bg-[#60b246]  border-[#60b246] font-semibold text-white justify-center items-center uppercase'>YES,START AFRESH</button>
+            </div>
+          </div>
+        )
+      }
     </>
   );
 }

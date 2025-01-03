@@ -60,16 +60,14 @@ function Navbar() {
       {/* Overlay */}
       <div
         onClick={handleVisible}
-        className={`w-full bg-black/50 z-30 h-full absolute transition-opacity duration-500 ${
-          visible ? 'visible opacity-100' : 'invisible opacity-0'
-        }`}
+        className={`w-full bg-black/50 z-30 h-full absolute transition-opacity duration-500 ${visible ? 'visible opacity-100' : 'invisible opacity-0'
+          }`}
       ></div>
 
       {/* Sidebar */}
       <div
-        className={`flex justify-end bg-white w-[40%] min-h-full z-30 absolute p-5 transition-transform duration-500 ${
-          visible ? 'left-0' : '-left-[100%]'
-        }`}
+        className={`flex justify-end bg-white w-[40%] min-h-full z-30 absolute p-5 transition-transform duration-500 ${visible ? 'left-0' : '-left-[100%]'
+          }`}
       >
         <div className="flex flex-col w-[60%] mt-2 gap-4 mr-6">
           <i className="fi fi-br-cross" onClick={handleVisible}></i>

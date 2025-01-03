@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DetailMenu from './DetailMenu';
 
 
-function MenuCard({ card ,resInfo }) {
+function MenuCard({ card, resInfo }) {
 
     let checkcard = false;
     if (card["@type"]) {
@@ -43,7 +43,7 @@ function MenuCard({ card ,resInfo }) {
                     <h1 className='font-extrabold text-[18px] leading-[20px] tracking-[-0.3px] text-[rgba(2,6,12,0.92)] mt-4'>{title}</h1>
                     {
                         categories.map((data) => (
-                            <MenuCard card={data}  />
+                            <MenuCard card={data} />
                         ))
                     }
                 </div>
