@@ -8,6 +8,7 @@ import { CardContext, Coordinate, Visibility } from './context/contextApi';
 import Cart from './compoents/Cart';
 import { useSelector } from 'react-redux';
 import toggleSlice from './utlis/toggleslice'
+import Signin from './compoents/Signin';
 
 function App() {
   /*  const [/* visible, setVisible] = useState(false); */
@@ -31,6 +32,7 @@ function App() {
           <Route index element={<RestaurantComponent />} />
           <Route path="/restaurantmenu/:id" element={<RestaurantMenu />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/signin" element={<Signin/>} />
           <Route path="/*" element={<h1>coming soon</h1>} />
         </Route>
       </Routes>

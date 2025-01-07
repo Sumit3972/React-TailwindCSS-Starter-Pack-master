@@ -3,12 +3,28 @@ import OnYourMind from './Onyourmind';
 import TopRestaurant from './TopResturant';
 import ONFD from "./ONFD";
 import { useSelector } from "react-redux";
+import { info } from "autoprefixer";
 
 function RestaurantComponent() {
   const [TopRestaurantData, SetTopRestaurantData] = useState([]);
   const [OnData, setOnData] = useState([]);
   const [Data, SetData] = useState({});
   const [loading, setLoading] = useState(true); // Loading state to show a spinner or message
+  const Filterval = useSelector((state => state.FilterSlice.Filtervalue))
+  console.log(TopRestaurantData)
+  const FilterData = TopRestaurantData.filter(item => {
+    if (!Filterval) return true;
+
+    switch (Filterval) {
+      case "Ratings 4.0+": return item?.info?.avgRating > 4
+      case "Rs. 300-Rs. 600": return item?.info?.costForTwo?.slice(1, 4) >= "300" && item?.info?.costForTwo?.slice(1, 4) <= "600"
+      case "Offers": return item.info.aggregatedDiscountInfoV3.discountTag === "FLAT DEAL"
+      case "Less than Rs. 300": return item?.info?.costForTwo?.slice(1, 4) < "300"
+      default: return true
+
+    }  
+  })
+
 
   // Destructure lat and lng with default values to avoid errors
   const { lat = 26.95250, lng = 75.71050 } = useSelector((state) => state.Coordinate) || {};
@@ -25,7 +41,7 @@ function RestaurantComponent() {
         `https://www.swiggy.com/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`
       );
       const result = await response.json();
-         console.log(result)
+      console.log(result)
       // Check if the result contains the expected data
       if (result && result.data) {
         SetData(result.data);
@@ -74,7 +90,7 @@ function RestaurantComponent() {
       <div className="w-[75%] mx-auto mt-3 overflow-hidden">
         <OnYourMind data={OnData} />
         <TopRestaurant data={TopRestaurantData} />
-        <ONFD data={TopRestaurantData} />
+        <ONFD data={Filterval ? FilterData : TopRestaurantData} />
       </div>
     </div>
   );

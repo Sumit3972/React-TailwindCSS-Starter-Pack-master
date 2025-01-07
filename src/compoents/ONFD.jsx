@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 import Resturantcard from './Resturantcard'
+import { useDispatch } from 'react-redux';
+import {Setfilter} from '../utlis/filterslice'
 
 function ONFD({ data }) {
   const [activeBtn, setactiveBtn] = useState(null);
   const filterOptions = ["Ratings 4.0+", "Rs. 300-Rs. 600", "Offers", "Less than Rs. 300",]
-
+  const dispatch = useDispatch(Setfilter())
 
 
 
   function handleBtn(filtername) {
     setactiveBtn(activeBtn === filtername ? null : filtername)
   }
-
+  dispatch(Setfilter(activeBtn));
 
 
   return (
